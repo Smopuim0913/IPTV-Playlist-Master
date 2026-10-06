@@ -1,0 +1,20 @@
+#EXTM3U
+#KODIPROP:inputstream.adaptive.license_type=clearkey
+#EXTINF:-1 tvg-id="cctv1.ftv" tvg-name="CCTV-1" tvg-logo="https://live.static.fandom.net/iptv/logos/cctv1.png" group-title="央视",CCTV-1 综合
+https://example-iptv.local/live/cctv1/index.m3u8
+#EXTINF:-1 tvg-id="cctv13.ftv" tvg-name="CCTV-13" tvg-logo="https://live.static.fandom.net/iptv/logos/cctv13.png" group-title="央视" response-time="28",CCTV-13 新闻
+https://example-iptv.local/live/cctv13/index.m3u8
+#EXTINF:-1 tvg-id="cctv5.ftv" tvg-name="CCTV-5" tvg-logo="https://live.static.fandom.net/iptv/logos/cctv5.png" group-title="央视" response-time="31" catchup="fmp4" catchup-source="cctv5",CCTV-5 体育
+https://example-iptv.local/live/cctv5/index.m3u8
+#EXTINF:-1 tvg-id="cctv9.ftv" tvg-name="CCTV-9" group-title="央视" response-time={18}ms,CCTV-9 纪录
+https://example-iptv.local/live/cctv9/index.m3u8
+#EXTINF:-1 tvg-name="本地测试-1080p" tvg-logo="" group-title="本地测试",本地测试 1080P
+http://localhost:8777/sample/hls-sample.m3u8
+#EXTINF:-1 tvg-name="本地测试-已下线" group-title="本地测试",本地测试 已下线
+http://127.0.0.1:9/live/dead/index.m3u8
+#EXTINF:-1 tvg-id="hunan.ftv" tvg-name="湖南卫视" tvg-logo="https://live.static.fandom.net/iptv/logos/hunan.png" group-title="卫视频道",湖南卫视
+https://example-iptv.local/live/hunan/index.m3u8
+#EXTINF:-1 tvg-id="bbcnews" tvg-name="BBC News" group-title="外频",BBC News
+https://example-iptv.local/live/bbcnews/index.m3u8
+#EXTINF:-1 tvg-name="无属性频道" group-title="未分组",无属性频道
+https://example-iptv.local/live/plain.ts

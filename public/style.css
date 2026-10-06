@@ -1,0 +1,291 @@
+:root{
+  --bg:#0f1115; --panel:#16191f; --panel2:#1c2028; --line:#262b33;
+  --text:#e6e8ec; --muted:#8b93a1; --accent:#4c8dff;
+  --ok:#3fbf7f; --warn:#e0a63a; --bad:#e5544b; --drag:#5b6472;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;background:var(--bg);color:var(--text);
+  font:13px/1.5 -apple-system,"Segoe UI","Microsoft YaHei",sans-serif;
+  display:flex;flex-direction:column;overflow:hidden;
+}
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  padding:10px 14px;background:var(--panel);border-bottom:1px solid var(--line);flex:none;
+}
+.brand{display:flex;align-items:center;gap:9px;font-size:14px;font-weight:500}
+.brand .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);display:inline-block}
+.brand .sub{color:var(--muted);font-size:12px;font-weight:400}
+.brand .tagline{color:#7f8ca0;font-size:11px;border:1px solid var(--line);border-radius:10px;padding:1px 7px;font-weight:400}
+.actions{display:flex;gap:6px;flex-wrap:wrap}
+.btn{
+  background:var(--panel2);color:var(--text);border:1px solid var(--line);
+  padding:6px 11px;border-radius:6px;cursor:pointer;font-size:12px;
+}
+.btn:hover:not(:disabled){border-color:#39404c;background:#232833}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#08111f}
+.btn.primary:hover:not(:disabled){background:#5c99ff}
+.btn.sm{padding:4px 8px;font-size:11px}
+.btn.danger{border-color:#4a2a2a;color:#ff8b84}
+.btn.danger:hover{background:#2a1a1a}
+/* 语言切换：跟别的按钮区分开，让人一眼就知道这是能点的 */
+.btn.langbtn{opacity:.55;font-variant-numeric:tabular-nums;min-width:58px}
+.btn.langbtn:hover{opacity:1}
+
+.toolbar{
+  display:flex;align-items:center;gap:8px;padding:8px 14px;
+  background:var(--panel);border-bottom:1px solid var(--line);flex:none;flex-wrap:wrap;
+}
+.inp{
+  background:var(--bg);border:1px solid var(--line);color:var(--text);
+  border-radius:6px;padding:5px 9px;font-size:12px;outline:none;
+}
+.inp:focus{border-color:var(--accent)}
+.inp.sel{padding:5px 6px;max-width:220px}
+.sep{width:1px;height:18px;background:var(--line)}
+.chk{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--muted);cursor:pointer}
+.grow{flex:1}
+.stat{color:var(--muted);font-size:12px}
+
+.wrap{flex:1;overflow:auto;padding:0}
+.empty{padding:44px 28px;max-width:680px}
+.empty h2{font-size:16px;font-weight:500;margin:0 0 10px}
+.empty p{color:var(--muted);margin:0 0 14px;line-height:1.8}
+.empty code{background:var(--panel2);padding:1px 5px;border-radius:4px;font-size:12px}
+.paste{
+  width:100%;height:130px;background:var(--bg);color:var(--text);
+  border:1px solid var(--line);border-radius:8px;padding:10px;
+  font-family:ui-monospace,Consolas,monospace;font-size:12px;resize:vertical;
+}
+
+.dropmask{
+  position:absolute;inset:0;background:rgba(15,17,21,.86);border:2px dashed var(--accent);
+  display:none;align-items:center;justify-content:center;z-index:40;
+  font-size:16px;color:var(--accent);
+}
+.dropmask.on{display:flex}
+
+/* 探测进度条：必须待在滚动容器（main.wrap）之外，否则列表一滚它就跟着滚出视口了。
+   body 是 flex 纵列，这里 flex:none 保住它自己的高度，别被 main 挤扁。 */
+.progress{
+  display:flex;align-items:center;gap:10px;flex:none;flex-shrink:0;
+  padding:7px 14px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  background:var(--panel2);
+}
+.progress .bar{flex:1;height:5px;background:#22262e;border-radius:3px;overflow:hidden;min-width:80px}
+.progress span{font-size:12px;color:var(--text);min-width:150px;font-variant-numeric:tabular-nums}
+/* 跑完自动收起前那一下：让它淡一拍，别在 100% 上无声无息地没掉 */
+.progress.tucked{opacity:.6;transition:opacity .3s}
+.progress .bar{flex:1;height:5px;background:#22262e;border-radius:3px;overflow:hidden}
+.progress .bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .2s}
+.progress span{font-size:12px;color:var(--muted);min-width:150px}
+.hidden{display:none !important}
+
+.warn{padding:7px 14px;font-size:12px;color:#ffd48a;background:#3a2a12;border-bottom:1px solid #5a4320}
+
+.tablewrap{overflow:auto}
+table.grid{width:100%;border-collapse:collapse;font-size:12px}
+table.grid th{
+  position:sticky;top:0;z-index:2;background:var(--panel);
+  text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);
+  color:var(--muted);font-weight:500;font-size:11px;white-space:nowrap;
+}
+table.grid td{padding:5px 8px;border-bottom:1px solid #1e222a;vertical-align:middle}
+table.grid tr:hover td{background:#181c23}
+table.grid tr.sel td{background:#17202f}
+table.grid tr.dragging{opacity:.4}
+.c-chk{width:30px}.c-handle{width:22px}.c-num{width:46px}.c-logo{width:40px}
+.c-name{min-width:170px}.c-group{width:150px}.c-tvg{width:110px}.c-url{width:230px}
+.c-res{width:120px}.c-delay{width:96px}.c-mbps{width:86px}.c-state{width:150px}.c-act{width:44px}
+
+td.num{color:var(--muted);font-variant-numeric:tabular-nums}
+td.handle{cursor:grab;color:var(--drag);user-select:none;text-align:center}
+td.handle:active{cursor:grabbing}
+.logo{width:30px;height:20px;object-fit:contain;display:block;background:#0b0d11;border-radius:3px}
+/* 缺 LOGO 的格子：给一个能一眼看见的 [+] 出口，别让用户去翻编辑框 */
+.c-logo{width:46px}
+.c-logo .logoadd{color:#7f8ca0;font-size:11px;padding:1px 4px;line-height:1.2}
+tr:hover .logoadd, .logoadd:hover{color:var(--accent);border-color:var(--accent)}
+
+/* 流地址：默认单行截断（长地址会把表格撑歪），勾「完整地址」后整段换行铺开 */
+.c-url{width:230px}
+.c-url .urltext{
+  display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  color:var(--muted);font-family:ui-monospace,Consolas,monospace;font-size:11px;
+}
+.c-url .btn{padding:1px 5px;margin-left:4px;opacity:.55}
+tr:hover .c-url .btn{opacity:1}
+table.grid.fullurl .c-url{width:420px}
+table.grid.fullurl .urltext{white-space:normal;word-break:break-all;font-size:11.5px;line-height:1.35}
+.cellinp{
+  background:transparent;border:1px solid transparent;border-radius:4px;
+  padding:3px 5px;color:var(--text);font:inherit;width:100%;outline:none;
+}
+.cellinp:hover{border-color:#2c323c}
+.cellinp:focus{border-color:var(--accent);background:var(--bg)}
+.res{font-variant-numeric:tabular-nums}
+.res.low{color:var(--muted)}
+.res.mid{color:var(--warn)}
+.res.high{color:var(--ok)}
+/* 「局部重挖」的小按钮：跟 LOGO 那个 [+] 一个尺寸，贴着分辨率那一格 */
+.resretry,.reswhy{padding:1px 6px;margin-left:4px;line-height:1.4;vertical-align:middle;color:var(--muted)}
+.resretry:hover,.reswhy:hover{color:var(--accent);border-color:var(--accent)}
+.reswhy{opacity:.8}
+/* 「流内名」这一格：只放两个小图标（ⓘ 看完整名 / ⧉ 复制整段），不铺文本 ——
+   服务名长短差得远（dftvHD 到「Phoenix … Chinese Channel .z0」一整句都有），
+   铺开会把这一列撑歪、把后面的延迟/码率列挤走。没读到就一个「—」，跟别的空格一个观感。 */
+.c-sdt{width:74px}
+td[data-c="sdt"]{position:relative;white-space:nowrap}
+.sdticon,.sdtcopy{padding:1px 5px;margin-left:3px;line-height:1.4;vertical-align:middle;color:var(--muted)}
+.sdticon:hover,.sdtcopy:hover{color:var(--accent);border-color:var(--accent)}
+.sdtlow{color:var(--muted)}
+.mbps{font-variant-numeric:tabular-nums}
+/* ⓘ 摊开的那一块（跟分辨率那个「?」一个路子：就地常驻，再点收起） */
+.sdtpop{left:6px;right:auto;max-width:min(380px,42vw)}
+
+/* 纯音频台：结论直接写在格子里（没视频轨 → 不可能有分辨率），比「—」+一个「?」好懂 */
+.res-audio{font-size:11px;padding:0 5px;border:1px solid var(--line);border-radius:4px}
+/* 「?」点开的那一小块归因：就地常驻、一次读完，再点一下收起。
+   用绝对定位浮在格子上，免得撑开了表格把整列挤歪。 */
+td[data-c="res"]{position:relative}
+.respop{
+  /* 贴着格子右边往左展开 —— 分辨率列在表格后半段，往右开会被 tablewrap 的 overflow 裁掉一角 */
+  position:absolute;right:6px;top:2px;z-index:50;cursor:pointer;
+  max-width:min(420px,46vw);white-space:pre-line;line-height:1.6;font-size:12px;
+  color:var(--text);background:var(--panel2);border:1px solid var(--accent);
+  border-radius:6px;padding:7px 10px;box-shadow:0 10px 24px rgba(0,0,0,.5);
+}
+.resbusy{opacity:.8;animation:resbusy 1s linear infinite}
+@keyframes resbusy{50%{opacity:.35}}
+.delay{font-variant-numeric:tabular-nums}
+.metric-bar{display:inline-block;width:44px;height:4px;background:#22262e;border-radius:2px;overflow:hidden;vertical-align:middle;margin-right:6px}
+.metric-bar i{display:block;height:100%;background:var(--accent)}
+.pill{display:inline-block;padding:1px 7px;border-radius:10px;font-size:11px;border:1px solid}
+.pill.ok{color:var(--ok);border-color:#24483a}
+.pill.warn{color:var(--warn);border-color:#4a3c1d}
+/* 伪直播（录好的循环片）：能播、分辨率也有，但压根不是实时流。
+   特意不用 warn 的黄色 —— 那会和「证书异常/易卡顿」抢同一种颜色，
+   而这两件事的处置正好相反：那俩是要留着看，这个是要剔掉的。 */
+.pill.fake{color:#c58bd0;border-color:#4a2f4e}
+/* 假源第二路：几段历史切片缝起来的「假直播」。
+   同样刻意避开黄色（那归「证书异常/易卡顿」）和红色（那归失败），
+   用冷蓝跟紫色的「循环片」并排但不撞，一眼能看出「这俩不是一个毛病」。 */
+.pill.seam{color:#8fb4e8;border-color:#2f3f5e}
+.pill.bad{color:var(--bad);border-color:#4a2422}
+.pill.none{color:var(--muted);border-color:var(--line)}
+.more{padding:10px 14px;color:var(--muted);font-size:12px}
+
+.modal{position:absolute;inset:0;background:rgba(8,10,13,.72);display:flex;align-items:center;justify-content:center;z-index:50}
+.sheet{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px;width:440px;max-height:80%;overflow:auto}
+.sheet h3{margin:0 0 14px;font-size:14px;font-weight:500}
+.fields{display:flex;flex-direction:column;gap:10px}
+.fields label{display:flex;flex-direction:column;gap:4px;font-size:11px;color:var(--muted)}
+.fields input,.fields textarea{
+  background:var(--bg);border:1px solid var(--line);color:var(--text);
+  border-radius:6px;padding:6px 8px;font:inherit;font-size:12px;outline:none;
+}
+.fields input:focus,.fields textarea:focus{border-color:var(--accent)}
+.fields textarea{resize:vertical;height:64px;font-family:ui-monospace,Consolas,monospace}
+.sheet-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
+
+/* LOGO 补全弹窗里的实时预览 */
+.logo-prev{margin-top:2px}
+.logo-prev img{width:88px;height:48px;object-fit:contain;background:var(--bg);border:1px solid var(--line);border-radius:6px}
+.m-note{font-size:11.5px;color:var(--muted);line-height:1.7}
+.m-note .mono{font-family:ui-monospace,Consolas,monospace;color:#9fb0c8;word-break:break-all}
+.m-sub{font-size:11px;color:var(--muted)}
+/* 「添加新频道」里地址框下方的检测结论行：探测中 / 流内服务名 / 没读到 */
+.stream-info{margin:-1px 0 5px;font-size:12px;line-height:1.6;min-height:19px;color:var(--muted);word-break:break-word}
+.stream-info .si-ok{color:var(--ok)}
+.stream-info .si-low{color:var(--muted)}
+.stream-info .si-wait{color:#7f8ca0}
+
+/* 「添加新频道」的体检报告卡：探测值先摊开给人看，勾选项才决定后缀写不写。
+   刻意比表格轻一档（没有进度条没图标），别在这小小弹窗里跟主表格抢视觉重量。 */
+.hlt{margin:3px 0 6px;border:1px solid var(--line);border-radius:8px;padding:7px 9px;background:var(--panel2);font-size:12px;line-height:1.8}
+.hlt-line{display:flex;flex-wrap:wrap;align-items:center;gap:3px 14px}
+.hlt-i{display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.hlt-k{color:var(--muted)}
+.hlt-v{color:var(--text);font-family:ui-monospace,Consolas,monospace;font-variant-numeric:tabular-nums}
+.hlt-v .v-ok{color:var(--ok)}
+.hlt-v .v-warn{color:var(--warn)}
+.hlt-v .v-bad{color:var(--bad)}
+.hlt-none{color:var(--muted)}
+/* 告警沿用表格里那两枚药丸的颜色：紫＝录好的循环片，冷蓝＝历史切片拼接。
+   同一个毛病在表格和弹窗里必须是同一种颜色，否则得记两套对应关系。 */
+.hlt-warn{margin:2px 0;color:#c58bd0}
+.hlt-warn.seam{color:#8fb4e8}
+.hlt-suf{border-top:1px solid var(--line);margin-top:2px;padding-top:4px}
+.hlt-chk{display:inline-flex;align-items:center;gap:4px;cursor:pointer;user-select:none}
+.hlt-chk input{margin:0;accent-color:var(--accent)}
+.hlt-pv{margin-left:auto;max-width:64%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hlt-pv b{color:var(--accent);font-weight:500}
+.hlt-name{margin-top:2px}
+
+/* 「把播放器窗口调到最前」那条提示：只在开完流、窗口可能看不见时才冒出来。
+ *
+ * 早先它是顶在工具栏下面的一条横幅，属于文档流里实实在在的一行 ——
+ * 开完流它就从无到有冒出来，把整个页面往下顶一截，人正要点的那一行、
+ * 正盯着的那个按钮跟着挪位置，手已经伸出去了才发现落点偏了。
+ * 现在挪到视口底部、跟底部 toast 同一层：浮层不占文档流，出没都不动上面
+ * 任何东西的位置，鼠标/手指的落点永远停在原地。外观也跟 toast 拉齐。 */
+.raisebar{
+  position:fixed;left:50%;bottom:22px;transform:translateX(-50%);
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  width:max-content;max-width:min(92vw,760px);
+  padding:8px 14px;background:#22262e;border:1px solid var(--line);
+  border-radius:14px;font-size:12px;color:var(--text);
+  box-shadow:0 6px 20px rgba(0,0,0,.35);
+  /* 这条上的两个按钮要能点，所以不能像 toast 那样整条吃掉指针事件 */
+  pointer-events:auto;z-index:70;
+}
+.raisebar[hidden]{display:none}
+/* 横幅时期为了不让长句子把整行撑爆，这里截成了单行省略；
+   现在它是一块能自己换行的浮层，就不截了，让整句完整摊开 */
+.raisebar .m-sub{flex:1;min-width:180px}
+
+/* 模态框里的输入框此前没上色（暗色主题下是默认白块），顺手补上 */
+.m-f{
+  background:var(--bg);color:var(--text);border:1px solid var(--line);
+  border-radius:6px;padding:5px 8px;font-size:12px;font-family:inherit;width:100%;
+}
+.m-f:focus{outline:none;border-color:var(--accent)}
+select.m-f{cursor:pointer}
+
+/* 「浏览…」的目录浏览器：只列目录 + 可执行程序，点一下就填路径 */
+.browtop{display:flex;align-items:center;gap:6px;padding:6px 6px 0}
+.browtop .mono{
+  flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  font-family:ui-monospace,Consolas,monospace;color:var(--muted);
+}
+/* 到盘符根就「上一级」不动了（C:\ 的父目录还是 C:\），得靠这个直接跳盘 */
+.browgo{display:flex;gap:6px;padding:6px 6px 0}
+.browgo .m-f{flex:1;min-width:0}
+.browdrives{display:flex;flex-wrap:wrap;gap:4px;padding:6px 6px 0}
+.browdrive{
+  background:var(--bg);color:var(--muted);border:1px solid var(--line);
+  border-radius:999px;padding:2px 10px;font-size:11.5px;cursor:pointer;
+  font-family:ui-monospace,Consolas,monospace;
+}
+.browdrive:hover{border-color:var(--accent);color:var(--accent)}
+.browdrive.on{border-color:var(--accent);color:var(--accent);background:#16233a}
+.brow{
+  padding:4px 8px;border-radius:5px;font-size:11.5px;cursor:pointer;
+  border:1px solid transparent;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.brow:hover{background:var(--panel);border-color:var(--line)}
+.brow.pick:hover{color:var(--accent)}
+.browser{max-height:210px;overflow:auto;border:1px solid var(--line);border-radius:8px;background:var(--panel);padding:4px;margin-top:4px}
+
+.toast{
+  position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(6px);
+  background:#22262e;border:1px solid var(--line);padding:7px 15px;border-radius:20px;
+  font-size:12px;color:var(--text);opacity:0;transition:opacity .18s,transform .18s;
+  z-index:60;pointer-events:none;max-width:min(70vw,620px);box-shadow:0 6px 20px rgba(0,0,0,.35);
+  /* 探测完成的汇总有好几段（完成数 / 在线数 / 没读到分辨率的原因），
+     全挤进一行胶囊会被挤成一坨，放行走 pre-line 让它自己换行 */
+  white-space:pre-line;line-height:1.6;text-align:center;border-radius:14px;
+}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}

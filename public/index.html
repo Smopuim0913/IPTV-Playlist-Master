@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title data-i18n="播放列表体检 / 编辑 / 更新">IPTV Playlist Master · 播放列表体检 / 编辑 / 更新</title>
+<link rel="stylesheet" href="/public/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="dot"></span>
+    <strong>IPTV Playlist Master</strong>
+    <span class="tagline" data-i18n="体检 · 编辑 · 更新">体检 · 编辑 · 更新</span>
+    <span class="sub" id="srcLabel" data-i18n="未载入">未载入</span>
+  </div>
+  <div class="actions">
+    <button id="btnOpen" class="btn" data-i18n="打开本地文件">打开本地文件</button>
+    <button id="btnUrl" class="btn" data-i18n="从网址载入">从网址载入</button>
+    <button id="btnProbe" class="btn primary" data-i18n="开始测速探测">开始测速探测</button>
+    <!-- 文案带条数、平时隐藏，由 syncResRetryBtn() 按「还有几条值得补测」显示 -->
+    <button id="btnRetryRes" class="btn primary hidden" title="用更大的窗口重读这些流的关键帧">↻ 补测没读到的 0 条</button>
+    <button id="btnAdd" class="btn" data-i18n="+ 新频道">+ 新频道</button>
+    <button id="btnSave" class="btn" disabled data-i18n="覆盖保存">覆盖保存</button>
+    <button id="btnExportM3U" class="btn" disabled data-i18n="导出 .m3u">导出 .m3u</button>
+    <button id="btnExportM3U8" class="btn" disabled data-i18n="导出 .m3u8">导出 .m3u8</button>
+    <button id="btnLang" class="btn langbtn" title="Switch language / 切换语言">English</button>
+    <input type="file" id="fileInput" accept=".m3u,.m3u8,.txt" hidden>
+  </div>
+</header>
+
+<div id="dropMask" class="dropmask"><div data-i18n="松手即导入 m3u / m3u8 文件">松手即导入 m3u / m3u8 文件</div></div>
+
+<div id="warn" class="warn hidden"></div>
+
+<section class="toolbar">
+  <input id="q" class="inp" type="search" data-i18n-ph="搜索频道名 / tvg-id / 地址…" placeholder="搜索频道名 / tvg-id / 地址…" autocomplete="off">
+  <select id="groupSel" class="inp sel"><option value="" data-i18n="全部分组">全部分组</option></select>
+  <span class="sep"></span>
+  <label class="chk"><input type="checkbox" id="selAll"> <span data-i18n="全选当前">全选当前</span></label>
+  <button id="btnSelBad" class="btn sm" data-i18n="选中探测失败的">选中探测失败的</button>
+  <button id="btnSelNoLogo" class="btn sm" data-i18n-title="选中所有没有 LOGO（或 LOGO 加载不出来）的频道，方便批量补" data-i18n="选中缺 LOGO 的">选中缺 LOGO 的</button>
+  <button id="btnSelFake" class="btn sm" data-i18n-title="选中所有伪直播（其实是录好的循环片，像带二维码的引流短片），方便整批删掉" data-i18n="选中伪直播">选中伪直播</button>
+  <button id="btnSelSeam" class="btn sm" data-i18n-title="选中所有拼接的假直播（几段历史切片缝起来放在滚动窗口里，播到末尾就卡死），方便整批删掉" data-i18n="选中拼接的">选中拼接的</button>
+  <button id="btnClearSel" class="btn sm" data-i18n-title="清空勾选，接着做别的操作" data-i18n="清除选择">清除选择</button>
+  <button id="btnBatchGroup" class="btn sm" data-i18n="批量改分组">批量改分组</button>
+  <span class="sep"></span>
+  <label class="chk"><input type="checkbox" id="chkFullUrl"> <span data-i18n="完整地址">完整地址</span></label>
+  <button id="btnCopyUrls" class="btn sm" data-i18n-title="把所选频道（没选就全部）的流地址一行一个复制到剪贴板" data-i18n="复制地址">复制地址</button>
+  <button id="btnPlaySel" class="btn sm hidden" data-i18n-title="调起本机播放器打开所选频道（没选就开第一条）。选中多条时全部排进同一个窗口，在窗口里轮流播，一次只出一路声" data-i18n="▶ 用播放器打开">▶ 用播放器打开</button>
+  <button id="btnPlayerCfg" class="btn sm" data-i18n-title="选择/确认本机播放器路径，没有可用播放器时行内的 ▶ 不会显示" data-i18n="播放器设置">播放器设置</button>
+  <button id="btnUpdate" class="btn sm" data-i18n-title="拉取远端最新列表，合并进这张表：本地手动改过的字段不会被覆盖" data-i18n="从源站更新">从源站更新</button>
+  <button id="btnFillRes" class="btn sm" data-i18n-title="把探测到的分辨率写回频道名末尾（追加/更新，没探测值的不动）" data-i18n="回填分辨率">回填分辨率</button>
+  <button id="btnFillDelay" class="btn sm" data-i18n-title="把探测到的首字节延迟写在频道名末尾，方便挑低延迟的源" data-i18n="回填延迟">回填延迟</button>
+  <button id="btnCleanName" class="btn sm" data-i18n-title="把频道名末尾的分辨率/延迟后缀全部摘掉，一个字都不回填" data-i18n="彻底清洗频道名">彻底清洗频道名</button>
+  <button id="btnSortDelay" class="btn sm" data-i18n-title="同名频道（多个源）按延迟升序挪位置，只在本组内调整" data-i18n="同名按延迟排序">同名按延迟排序</button>
+  <button id="btnDelSel" class="btn sm danger" data-i18n="删除所选">删除所选</button>
+  <span class="grow"></span>
+  <input id="pathInput" class="inp" style="max-width:280px" data-i18n-ph="本地绝对路径（用于覆盖保存）" placeholder="本地绝对路径（用于覆盖保存）">
+  <button id="btnReadPath" class="btn sm" data-i18n="按路径读取">按路径读取</button>
+  <span id="stat" class="stat"></span>
+  <span id="probeStat" class="stat"></span>
+</section>
+
+<!-- 播放器窗口被别的窗口盖住时（声音在放、画面看不见）给个出口 -->
+<div id="raiseBar" class="raisebar" hidden>
+  <span id="raiseMsg" class="m-sub"></span>
+  <button id="btnRaiseWin" class="btn sm" data-i18n="把播放器窗口调到最前">把播放器窗口调到最前</button>
+  <button id="btnRaiseHide" class="btn sm" data-i18n="知道了">知道了</button>
+</div>
+
+<!-- 探测进度条：刻意放在 <main> 外面（也就是滚动容器之外）。
+     早先它长在 main 里，列表一滚它就跟着滚出视口，跑几百条的时候几乎全程看不见它。
+     现在它紧贴常驻工具栏下面常驻，跑完自动收起。 -->
+<div id="progress" class="progress hidden">
+  <div class="bar"><i id="bar"></i></div>
+  <span id="progressTxt" data-i18n="准备中…">准备中…</span>
+  <button id="btnStopProbe" class="btn sm" data-i18n="停止">停止</button>
+</div>
+
+<main id="wrap" class="wrap">
+  <div id="empty" class="empty">
+    <h2 data-i18n="还没有载入播放列表">还没有载入播放列表</h2>
+    <p data-i18n-html="点右上角「打开本地文件」，或直接把 <code>.m3u</code> / <code>.m3u8</code> 拖进来。也可以粘贴一段 m3u 文本，或填入远程列表网址（由本地服务代取，绕开跨域限制）。">点右上角「打开本地文件」，或直接把 <code>.m3u</code> / <code>.m3u8</code> 拖进来。<br>
+       也可以粘贴一段 m3u 文本，或填入远程列表网址（由本地服务代取，绕开跨域限制）。</p>
+    <textarea id="paste" class="paste" placeholder="#EXTM3U&#10;#EXTINF:-1 tvg-id=&quot;cctv1&quot; group-title=&quot;央视&quot;,CCTV-1&#10;http://localhost/index.m3u8"></textarea>
+    <button id="btnPaste" class="btn primary" data-i18n="用上面的文本载入">用上面的文本载入</button>
+  </div>
+
+  <div id="tableWrap" class="tablewrap hidden">
+    <table class="grid">
+      <thead>
+        <tr>
+          <th class="c-chk"></th>
+          <th class="c-handle"></th>
+          <th class="c-num">#</th>
+          <th class="c-logo"></th>
+          <th class="c-name" data-i18n="频道名">频道名</th>
+          <th class="c-tvg">tvg-id</th>
+          <th class="c-group" data-i18n="分组">分组</th>
+          <th class="c-url" data-i18n="流地址">流地址</th>
+          <th class="c-res" data-i18n="分辨率">分辨率</th>
+          <th class="c-sdt" data-i18n="流内名">流内名</th>
+          <th class="c-delay" data-i18n="延迟">延迟</th>
+          <th class="c-mbps" data-i18n="标称码率">标称码率</th>
+          <th class="c-state" data-i18n="状态">状态</th>
+          <th class="c-act"></th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+    <div id="more" class="more hidden"></div>
+  </div>
+</main>
+
+<div id="toast" class="toast"></div>
+
+<div id="modal" class="modal hidden">
+  <div class="sheet">
+    <h3 id="modalTitle" data-i18n="编辑频道">编辑频道</h3>
+    <div class="fields" id="modalFields"></div>
+    <div class="sheet-actions">
+      <button id="modalCancel" class="btn" data-i18n="取消">取消</button>
+      <button id="modalOk" class="btn primary" data-i18n="确定">确定</button>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="/public/app.js"></script>
+</body>
+</html>

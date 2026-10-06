@@ -1,0 +1,14 @@
+# 本机产物：测试临时目录
+# 里面是 test/gen-cert.sh 生成的自签证书（含 CA 私钥），绝不能进仓库
+.tmp/
+
+# 本地工作记忆，含本机绝对路径，跟发布无关
+.workbuddy/
+
+node_modules/
+
+*.log
+npm-debug.log*
+
+.DS_Store
+Thumbs.db
